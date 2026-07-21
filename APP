@@ -1,0 +1,35 @@
+import os
+from langchain_community.document_loaders import PyPDFDirectoryLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import Chroma
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+
+def preparar_base_conocimiento():
+    # 1. Ruta donde se guardan las políticas en PDF
+    ruta_datos = "data/documents/Manual_de_Ferreteria_Leon.pdf"
+    
+    if not os.path.exists(ruta_datos) or not os.listdir(ruta_datos):
+        print(f"⚠️ Alerta: Coloca tus archivos PDF dentro de la carpeta '{ruta_datos}' antes de continuar.")
+        return None
+
+    print("📄 Cargando documentos PDF...")
+    loader = PyPDFDirectoryLoader(ruta_datos)
+    documentos = loader.load()
+
+    # 2. Partir el texto en fragmentos (chunks) para que la IA los procese mejor
+    print("✂️ Fragmentando el texto...")
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,       # Tamaño de cada fragmento (caracteres)
+        chunk_overlap=200      # Solapamiento para no perder contexto entre fragmentos
+    )
+    fragmentos = text_splitter.split_documents(documentos)
+
+    # 3. Crear los embeddings (vectores) y guardarlos en una BD Chroma temporal
+    print("🧠 Indexando información en la base de datos vectorial...")
+    embeddings = GoogleGenAIEmbeddings(model="models/embedding-001")
+    
+    # Creamos la base de datos en memoria (no crea archivos en disco)
+    base_conocimiento = Chroma.from_documents(fragmentos, embeddings)
+    print("✅ ¡Base de conocimiento lista para usar!")
+    
+    return base_conocimiento
