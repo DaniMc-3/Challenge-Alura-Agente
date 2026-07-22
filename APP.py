@@ -3,23 +3,26 @@ import sys
 from dotenv import load_dotenv
 
 # Cargar variables del archivo .env
-load_dotenv()
+load_dotenv(override=True)
 
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 
 def obtener_api_key():
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if not api_key or "tu_clave" in api_key:
+    api_key = os.getenv("GROQ_API_KEY")
+    if api_key:
+        print(f"🔑 Clave Groq detectada: {api_key[:4]}...{api_key[-4:]}")
+    
+    if not api_key:
         raise ValueError(
-            "❌ ERROR: No se encontró una GOOGLE_API_KEY válida en el archivo .env\n"
-            "Asegúrate de incluir la línea: GOOGLE_API_KEY=AIzaSy... en tu archivo .env"
+            "❌ ERROR: No se encontró una GROQ_API_KEY válida en el archivo .env\n"
+            "Asegúrate de incluir la línea: GROQ_API_KEY=gsk_... en tu archivo .env"
         )
     return api_key
 
@@ -55,11 +58,11 @@ def formato_documentos(docs):
 def crear_agente_soporte(base_conocimiento):
     api_key = obtener_api_key()
     
-    # Modelo Gemini oficial
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash", 
+    # Modelo Llama 3.3 ejecutado en Groq
+    llm = ChatGroq(
+        model="llama-3.3-70b-versatile", 
         temperature=0.2,
-        google_api_key=api_key
+        groq_api_key=api_key
     )
 
     retriever = base_conocimiento.as_retriever(search_kwargs={"k": 3})
