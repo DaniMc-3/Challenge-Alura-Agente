@@ -79,15 +79,3 @@ Agente Alura IA/
 
 
 Proyecto desarrollado para el Challenge Alura Latam.
-
-
----
-
-### Pasos finales para guardar todo lo que hicimos en Git:
-
-1. Reemplaza el texto en tu archivo **`README.md`** y guárdalo (`Ctrl + S`).
-2. En tu terminal ejecuta:
-   ```powershell
-   git add README.md
-   git commit -m "docs: Simplificada seccion de instalacion en README"
-   git push   
