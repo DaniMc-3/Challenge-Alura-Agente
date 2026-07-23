@@ -5,3 +5,4 @@ chromadb
 streamlit
 python-dotenv
 pypdf
+sentence-transformers
