@@ -79,3 +79,6 @@ Agente Alura IA/
 
 
 Proyecto desarrollado para el Challenge Alura Latam.
+
+## Prueba de funcionamiento
+![Demostración de la aplicación](assets/demo.png)
